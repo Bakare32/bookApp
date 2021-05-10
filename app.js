@@ -50,7 +50,24 @@ app.post("/book", (req, res) => {
     })
 })
 
-app.put("/book:id")
+app.put("/book:id", (req, res) => {
+    client.connect((err, connectedClient) => {
+        if(err) {
+            return res.status(500).json({message: err})
+        }
+        const db = connectedClient.db();
+        db.collection("book").findOneAndUpdate({
+            name: req.body.name,
+            email: req.body.email,
+            country: req.body.country
+        }, (err, result) => {
+            if (err) {
+                return res.status(500).json({message: err})
+            }
+            return res.status(200).json({message: "Your data have been updated"})
+        })
+    })
+})
 
 
 app.listen(port, () => {
